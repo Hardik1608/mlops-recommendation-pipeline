@@ -1,14 +1,26 @@
 # MLOps Recommendation Pipeline
 
-> A MovieLens recommender built like a production system: Kafka events, a Feast feature
-> store, models gated and versioned in MLflow, a FastAPI service with A/B and shadow traffic,
-> Prometheus/Grafana monitoring, Airflow, Docker Compose and Helm. On top of it, one research
-> question: **does a transformer (SASRec) beat a well-tuned matrix factorisation?** Only under
-> the protocol most papers use. On the held-out future, the hybrid ALS model wins.
+**A movie recommender run like a production system (streaming events, feature store, model
+registry with a release gate, A/B and shadow traffic, monitoring, drift-triggered retraining),
+plus one research question: does a transformer beat matrix factorisation?**
 
 [![CI](https://github.com/Hardik1608/mlops-recommendation-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/Hardik1608/mlops-recommendation-pipeline/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+- **+16% NDCG@10** for the served hybrid ALS over a tuned popularity baseline (MovieLens 1M;
+  +13% on 25M ratings; paired bootstrap, p < 0.001).
+- **3.8 ms P95** at 327 req/s on one API worker, 0 errors; the 100 ms SLO holds up to 80% load.
+- **The transformer (SASRec) wins 1.6–4.9× under the protocol most papers use, and loses
+  28–49% on held-out future data.** It failed the release gate, so it runs in **shadow mode**:
+  scored on live traffic, never shown to users.
+- **End to end:** Kafka → Feast → MLflow champion/challenger → FastAPI → Prometheus/Grafana;
+  PSI drift triggers Airflow retraining; Docker Compose and Helm.
+
+![Grafana during a load test: 50 req/s at 2 ms P95, zero errors; A/B traffic split; loaded models (ALS champion v1, ALS challenger v2, SASRec shadow v3); drift job flagging hour_of_day; shadow row comparing SASRec's compute latency with the champion's and its agreement with the served list](docs/img/grafana-dashboard.png)
+
+**Stack:** PyTorch · ONNX Runtime · Kafka · Feast · MLflow · Airflow · FastAPI · Redis ·
+Prometheus/Grafana · Docker Compose · Helm · GitHub Actions
 
 Write-up with interactive demo: **[hardik1608.github.io/projects/recommender.html](https://hardik1608.github.io/projects/recommender.html)**
 
@@ -242,9 +254,7 @@ with 10% new users, 0 errors):
 Server-side request P95 stayed at 2.3 ms with the shadow running (it scores after the response
 is built). SASRec's top 10 overlapped the served list by only **18-20%** (two load tests): the
 transformer recommends very different movies, which is what an online A/B test would have to
-justify.
-
-![Grafana during a load test: 50 req/s at 2 ms P95, zero errors; A/B traffic split; loaded models (ALS champion v1, ALS challenger v2, SASRec shadow v3); drift job flagging hour_of_day; shadow row comparing SASRec's compute latency with the champion's and its agreement with the served list](docs/img/grafana-dashboard.png)
+justify. The Grafana screenshot at the top of this page is from this run.
 
 ### 6. Drift monitoring
 
