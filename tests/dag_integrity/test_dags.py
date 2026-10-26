@@ -3,6 +3,8 @@ the dedicated CI job (Linux) where apache-airflow is installed with its constrai
 
 from __future__ import annotations
 
+import inspect
+import os
 import sys
 from pathlib import Path
 
@@ -16,11 +18,15 @@ DAGS_DIR = Path(__file__).resolve().parents[2] / "dags"
 @pytest.fixture(scope="module")
 def dagbag():
     sys.path.insert(0, str(DAGS_DIR))
+    os.environ.setdefault("AIRFLOW__CORE__LOAD_EXAMPLES", "False")
     try:  # Airflow 3.1+
         from airflow.dag_processing.dagbag import DagBag
     except ImportError:  # Airflow 2.x / 3.0
         from airflow.models.dagbag import DagBag
-    return DagBag(dag_folder=str(DAGS_DIR), include_examples=False)
+    # Airflow 3.3 removed `include_examples`; examples then follow AIRFLOW__CORE__LOAD_EXAMPLES.
+    if "include_examples" in inspect.signature(DagBag.__init__).parameters:
+        return DagBag(dag_folder=str(DAGS_DIR), include_examples=False)
+    return DagBag(dag_folder=str(DAGS_DIR))
 
 
 def test_dags_import_without_errors(dagbag) -> None:
