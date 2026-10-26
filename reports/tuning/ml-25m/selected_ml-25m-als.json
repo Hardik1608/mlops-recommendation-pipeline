@@ -1,0 +1,20 @@
+{
+  "popularity": {
+    "popularity_half_life_days": 90,
+    "selected_by": "1_popularity_half_life (ndcg_at_10)"
+  },
+  "implicit_als": {
+    "alpha": 1,
+    "regularization": 100,
+    "weighting": "rating",
+    "factors": 128,
+    "blend_half_life_days": 14,
+    "blend_weight": 5,
+    "selected_by": "4_implicit_als_popularity_blend (warm_ndcg_at_10)"
+  },
+  "explicit_als": {
+    "factors": 64,
+    "regularization": 0.05,
+    "selected_by": "5_explicit_als_reg (rmse)"
+  }
+}

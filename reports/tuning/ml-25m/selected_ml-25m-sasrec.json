@@ -1,0 +1,8 @@
+{
+  "sasrec": {
+    "loss": "sampled_ce",
+    "factors": 64,
+    "selected_by": "7_sasrec_hidden (warm_ndcg_at_10)",
+    "epochs": 14
+  }
+}

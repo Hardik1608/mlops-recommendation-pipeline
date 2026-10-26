@@ -1,0 +1,15 @@
+# docker-compose / Kubernetes: Redis online store. Feast expands ${VARS} from the environment,
+# e.g. FEAST_REDIS_CONNECTION_STRING="redis:6379,db=1".
+# The file registry lives on a shared volume in compose; on Kubernetes use a SQL registry
+# (registry_type: sql, path: postgresql://...) so every pod reads the same definitions.
+project: recsys
+provider: local
+registry: ../data/feast/registry.db
+online_store:
+  type: redis
+  connection_string: ${FEAST_REDIS_CONNECTION_STRING}
+offline_store:
+  type: file
+entity_key_serialization_version: 3
+auth:
+  type: no_auth

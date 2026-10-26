@@ -1,0 +1,31 @@
+# Experiment: the same implicit ALS without the trending-popularity prior (blend_weight 0).
+# Used to demonstrate the registry lifecycle: train this first (becomes champion), then the
+# default configs/ml-latest-small.yaml (hybrid) - the gate decides whether it becomes challenger.
+dataset: ml-latest-small
+split:
+  val_fraction: 0.1
+  test_fraction: 0.1
+evaluation:
+  k: 10
+  relevance_threshold: 4.0
+  context_events: 5
+model:
+  type: implicit_als
+  factors: 64
+  regularization: 10.0
+  alpha: 20.0
+  weighting: rating
+  iterations: 15
+  popularity_half_life_days: 90
+  blend_weight: 0.0
+baseline:
+  type: popularity
+  popularity_half_life_days: 90
+explicit:
+  type: explicit_als
+  factors: 64
+  regularization: 0.02
+  iterations: 15
+gate:
+  metric: ndcg_at_10
+  min_relative_improvement: 0.0

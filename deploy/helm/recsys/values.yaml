@@ -1,0 +1,129 @@
+# Default values for the recsys chart.
+
+image:
+  repository: ghcr.io/hardik1608/mlops-recommendation-pipeline
+  tag: ""  # defaults to .Chart.AppVersion
+  pullPolicy: IfNotPresent
+imagePullSecrets: []
+
+nameOverride: ""
+fullnameOverride: ""
+
+# Non-secret configuration -> ConfigMap -> environment of every container.
+# Hostnames assume the dependencies run in the "data" / "mlops" namespaces.
+config:
+  RECSYS_MODEL_SOURCE: mlflow
+  RECSYS_MODEL_REFRESH_SECONDS: "60"       # poll registry aliases, hot-swap on promote/rollback
+  RECSYS_CHALLENGER_TRAFFIC: "0.1"         # share of users routed to the challenger (A/B)
+  RECSYS_SHADOW_TRAFFIC: "0.2"             # share of requests also scored by the shadow model
+  RECSYS_AB_SALT: recsys-ab-v1             # change per experiment to re-randomise users
+  RECSYS_CACHE_BACKEND: redis
+  RECSYS_CACHE_TTL_SECONDS: "300"
+  RECSYS_REDIS_URL: redis://redis-master.data.svc.cluster.local:6379/0
+  RECSYS_FEATURE_BACKEND: feast
+  RECSYS_FEAST_YAML: feature_store.k8s.yaml
+  FEAST_REDIS_CONNECTION_STRING: redis-master.data.svc.cluster.local:6379,db=1
+  RECSYS_KAFKA_BOOTSTRAP_SERVERS: kafka.data.svc.cluster.local:9092
+  RECSYS_KAFKA_TOPIC: ratings.v1
+  RECSYS_KAFKA_GROUP_ID: recsys-feature-writer
+  MLFLOW_TRACKING_URI: http://mlflow.mlops.svc.cluster.local:5000
+  RECSYS_LOG_FORMAT: json
+  RECSYS_LOG_LEVEL: INFO
+
+# Name of an existing Secret injected with envFrom (e.g. FEAST_REGISTRY_URL with the
+# Postgres password, MLFLOW_TRACKING_TOKEN, REDIS passwords). Never put secrets in values.
+existingSecret: recsys-secrets
+
+api:
+  replicaCount: 2
+  port: 8000
+  resources:
+    requests:
+      cpu: 500m
+      memory: 768Mi
+    limits:
+      cpu: "1"
+      memory: 1536Mi
+  # Liveness only checks the process; readiness requires a loaded champion model.
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    periodSeconds: 10
+    timeoutSeconds: 2
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /ready
+      port: http
+    periodSeconds: 5
+    timeoutSeconds: 2
+    failureThreshold: 3
+  # Model download from MLflow happens at startup: give it up to 5 minutes.
+  startupProbe:
+    httpGet:
+      path: /ready
+      port: http
+    periodSeconds: 5
+    failureThreshold: 60
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 10
+    targetCPUUtilizationPercentage: 60
+    behavior:
+      scaleUp:
+        stabilizationWindowSeconds: 0
+        policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 30
+      scaleDown:
+        stabilizationWindowSeconds: 300
+        policies:
+          - type: Pods
+            value: 1
+            periodSeconds: 60
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+  service:
+    type: ClusterIP
+    port: 80
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "8000"
+    prometheus.io/path: /metrics
+
+consumer:
+  enabled: true
+  # At most one active consumer per partition: keep replicas <= partitions of ratings.v1.
+  replicaCount: 2
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+serviceMonitor:
+  enabled: false  # requires the prometheus-operator CRDs
+  interval: 15s
+
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 10001
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop: ["ALL"]
+
+nodeSelector: {}
+tolerations: []
+affinity: {}

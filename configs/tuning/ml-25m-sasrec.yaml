@@ -1,0 +1,16 @@
+# Staged search for SASRec on ml-25m (GPU): train -> validation window, warm users.
+# Base values: the `sequential` block of configs/ml-25m.yaml (dropout 0.2, 2 blocks and
+# max_len 200 carried over from the ml-1m search, where dropout 0.5 and 1 block lost).
+# Stage 6 asks the scale question: full softmax over 59k movies (batch 64 to fit 12 GB)
+# vs 1,024 shared sampled negatives (Klenitskiy & Vasilev, RecSys 2023).
+#   recsys tune-plan --plan configs/tuning/ml-25m-sasrec.yaml --mlflow
+dataset: ml-25m
+stages:
+  - name: 6_sasrec_loss
+    model: sasrec
+    metric: warm_ndcg_at_10
+    grid: {loss: [ce, sampled_ce]}
+  - name: 7_sasrec_hidden
+    model: sasrec
+    metric: warm_ndcg_at_10
+    grid: {factors: [64, 128]}

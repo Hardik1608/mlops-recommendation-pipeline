@@ -1,0 +1,25 @@
+# Staged search for the CPU models on ml-25m (train -> validation window). Same stages as
+# the ml-1m search; regularization is searched over a wider range for 22x more ratings.
+#   recsys tune-plan --plan configs/tuning/ml-25m-als.yaml --mlflow
+dataset: ml-25m
+stages:
+  - name: 1_popularity_half_life
+    model: popularity
+    metric: ndcg_at_10
+    grid: {popularity_half_life_days: [null, 3, 7, 30, 90, 365]}
+  - name: 2_implicit_als_alpha_reg_weighting
+    model: implicit_als
+    metric: warm_ndcg_at_10
+    grid: {alpha: [1, 5, 20], regularization: [10, 100, 1000], weighting: [rating, binary]}
+  - name: 3_implicit_als_factors
+    model: implicit_als
+    metric: warm_ndcg_at_10
+    grid: {factors: [64, 128]}
+  - name: 4_implicit_als_popularity_blend
+    model: implicit_als
+    metric: warm_ndcg_at_10
+    grid: {blend_half_life_days: [3, 7, 14], blend_weight: [1, 2, 5]}
+  - name: 5_explicit_als_reg
+    model: explicit_als
+    metric: rmse
+    grid: {factors: [64], regularization: [0.05, 0.1, 0.2]}

@@ -1,0 +1,300 @@
+{
+  "dataset": "ml-1m",
+  "model_type": "implicit_als",
+  "selection_metric": "warm_ndcg_at_10",
+  "split": "train -> val",
+  "grid": {
+    "blend_half_life_days": [
+      3,
+      7,
+      14
+    ],
+    "blend_weight": [
+      2,
+      3,
+      5
+    ]
+  },
+  "best": {
+    "params": {
+      "blend_half_life_days": 3,
+      "blend_weight": 2
+    },
+    "metrics": {
+      "warm_precision_at_10": 0.11443089430894308,
+      "warm_recall_at_10": 0.06082372254668785,
+      "warm_ndcg_at_10": 0.1328611839437974,
+      "warm_map_at_10": 0.07429769227775423,
+      "warm_hit_rate_at_10": 0.4329268292682927,
+      "warm_n_users": 492.0,
+      "cold_precision_at_10": 0.3358428805237316,
+      "cold_recall_at_10": 0.0691672490873358,
+      "cold_ndcg_at_10": 0.36276011585566226,
+      "cold_map_at_10": 0.24007922900020168,
+      "cold_hit_rate_at_10": 0.8690671031096563,
+      "cold_n_users": 611.0,
+      "precision_at_10": 0.2370806890299184,
+      "recall_at_10": 0.06544556725778115,
+      "ndcg_at_10": 0.2602122695268884,
+      "map_at_10": 0.16613134498619972,
+      "hit_rate_at_10": 0.6745240253853128,
+      "n_users": 1103.0,
+      "coverage_at_10": 0.049153468050245765
+    },
+    "fit_seconds": 23.860074800000802
+  },
+  "results": [
+    {
+      "params": {
+        "blend_half_life_days": 3,
+        "blend_weight": 2
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.11443089430894308,
+        "warm_recall_at_10": 0.06082372254668785,
+        "warm_ndcg_at_10": 0.1328611839437974,
+        "warm_map_at_10": 0.07429769227775423,
+        "warm_hit_rate_at_10": 0.4329268292682927,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.36276011585566226,
+        "cold_map_at_10": 0.24007922900020168,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.2370806890299184,
+        "recall_at_10": 0.06544556725778115,
+        "ndcg_at_10": 0.2602122695268884,
+        "map_at_10": 0.16613134498619972,
+        "hit_rate_at_10": 0.6745240253853128,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.049153468050245765
+      },
+      "fit_seconds": 23.860074800000802
+    },
+    {
+      "params": {
+        "blend_half_life_days": 7,
+        "blend_weight": 2
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.11402439024390244,
+        "warm_recall_at_10": 0.05661850694933267,
+        "warm_ndcg_at_10": 0.13182134179299307,
+        "warm_map_at_10": 0.07427194522795567,
+        "warm_hit_rate_at_10": 0.42886178861788615,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.36276011585566226,
+        "cold_map_at_10": 0.24007922900020168,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23689936536718043,
+        "recall_at_10": 0.06356980472478137,
+        "ndcg_at_10": 0.25974844147775356,
+        "map_at_10": 0.16611986035473927,
+        "hit_rate_at_10": 0.6727107887579329,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.05024576734025123
+      },
+      "fit_seconds": 22.62806880000062
+    },
+    {
+      "params": {
+        "blend_half_life_days": 3,
+        "blend_weight": 3
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.1136178861788618,
+        "warm_recall_at_10": 0.06066754727547394,
+        "warm_ndcg_at_10": 0.13176387356695102,
+        "warm_map_at_10": 0.07323638534004388,
+        "warm_hit_rate_at_10": 0.4369918699186992,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.36276011585566226,
+        "cold_map_at_10": 0.24007922900020168,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23671804170444244,
+        "recall_at_10": 0.06537590430815536,
+        "ndcg_at_10": 0.2597228074186306,
+        "map_at_10": 0.16565794243556192,
+        "hit_rate_at_10": 0.6763372620126926,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.042053522665210265
+      },
+      "fit_seconds": 23.466992599999685
+    },
+    {
+      "params": {
+        "blend_half_life_days": 14,
+        "blend_weight": 2
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.11402439024390246,
+        "warm_recall_at_10": 0.05596056374319549,
+        "warm_ndcg_at_10": 0.13169799292105683,
+        "warm_map_at_10": 0.07444613437064077,
+        "warm_hit_rate_at_10": 0.43089430894308944,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.36276011585566226,
+        "cold_map_at_10": 0.24007922900020168,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23689936536718043,
+        "recall_at_10": 0.06327632507163587,
+        "ndcg_at_10": 0.25969342094738856,
+        "map_at_10": 0.16619755850360696,
+        "hit_rate_at_10": 0.6736174070716229,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.05215729109776079
+      },
+      "fit_seconds": 23.49911510000038
+    },
+    {
+      "params": {
+        "blend_half_life_days": 3,
+        "blend_weight": 5
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.11382113821138211,
+        "warm_recall_at_10": 0.06419353846798176,
+        "warm_ndcg_at_10": 0.13168953196198244,
+        "warm_map_at_10": 0.0721101109820622,
+        "warm_hit_rate_at_10": 0.4532520325203252,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.36276011585566226,
+        "cold_map_at_10": 0.24007922900020168,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23680870353581146,
+        "recall_at_10": 0.06694869457716156,
+        "ndcg_at_10": 0.25968964688404805,
+        "map_at_10": 0.16515556076364263,
+        "hit_rate_at_10": 0.6835902085222122,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.0363189513926816
+      },
+      "fit_seconds": 22.673098399999617
+    },
+    {
+      "params": {
+        "blend_half_life_days": 14,
+        "blend_weight": 3
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.11280487804878049,
+        "warm_recall_at_10": 0.05708909824333009,
+        "warm_ndcg_at_10": 0.13140088963708824,
+        "warm_map_at_10": 0.07460471666082875,
+        "warm_hit_rate_at_10": 0.4247967479674797,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.36276011585566226,
+        "cold_map_at_10": 0.24007922900020168,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.2363553943789665,
+        "recall_at_10": 0.06377971489399872,
+        "ndcg_at_10": 0.25956089618246336,
+        "map_at_10": 0.16626829511899455,
+        "hit_rate_at_10": 0.670897552130553,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.04478427089022392
+      },
+      "fit_seconds": 23.864067299999988
+    },
+    {
+      "params": {
+        "blend_half_life_days": 7,
+        "blend_weight": 3
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.11280487804878049,
+        "warm_recall_at_10": 0.05791907076868221,
+        "warm_ndcg_at_10": 0.13135469011385148,
+        "warm_map_at_10": 0.07406436467992798,
+        "warm_hit_rate_at_10": 0.42886178861788615,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.36276011585566226,
+        "cold_map_at_10": 0.24007922900020168,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.2363553943789665,
+        "recall_at_10": 0.06414992929333983,
+        "ndcg_at_10": 0.25954028859820905,
+        "map_at_10": 0.16602726776214669,
+        "hit_rate_at_10": 0.6727107887579329,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.04451119606772255
+      },
+      "fit_seconds": 23.40690259999974
+    },
+    {
+      "params": {
+        "blend_half_life_days": 14,
+        "blend_weight": 5
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.11056910569105691,
+        "warm_recall_at_10": 0.05974465954475703,
+        "warm_ndcg_at_10": 0.12967460091501018,
+        "warm_map_at_10": 0.07260251322751322,
+        "warm_hit_rate_at_10": 0.4349593495934959,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.36276011585566226,
+        "cold_map_at_10": 0.24007922900020168,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23535811423390754,
+        "recall_at_10": 0.0649642445044267,
+        "ndcg_at_10": 0.25879087437714837,
+        "map_at_10": 0.1653751998432092,
+        "hit_rate_at_10": 0.6754306436990027,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.03932277444019661
+      },
+      "fit_seconds": 25.501393700000335
+    },
+    {
+      "params": {
+        "blend_half_life_days": 7,
+        "blend_weight": 5
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.11056910569105691,
+        "warm_recall_at_10": 0.06066260196603859,
+        "warm_ndcg_at_10": 0.12933250945290586,
+        "warm_map_at_10": 0.07197011980040435,
+        "warm_hit_rate_at_10": 0.4369918699186992,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.36276011585566226,
+        "cold_map_at_10": 0.24007922900020168,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23535811423390754,
+        "recall_at_10": 0.0653736984221697,
+        "ndcg_at_10": 0.258638282355974,
+        "map_at_10": 0.16509311682767194,
+        "hit_rate_at_10": 0.6763372620126926,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.038503549972692515
+      },
+      "fit_seconds": 25.4323188999997
+    }
+  ]
+}

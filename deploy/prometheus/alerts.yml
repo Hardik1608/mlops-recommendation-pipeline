@@ -1,0 +1,86 @@
+groups:
+  - name: recsys-slo
+    rules:
+      - record: recsys:request_latency_seconds:p95_5m
+        expr: >
+          histogram_quantile(0.95,
+            sum by (le, variant) (
+              rate(recsys_http_request_duration_seconds_bucket{route="/recommendations/{user_id}"}[5m])))
+
+      - record: recsys:request_error_ratio:5m
+        expr: >
+          sum(rate(recsys_http_requests_total{route="/recommendations/{user_id}", status=~"5.."}[5m]))
+          /
+          clamp_min(sum(rate(recsys_http_requests_total{route="/recommendations/{user_id}"}[5m])), 1e-9)
+
+      - alert: RecsysHighP95Latency
+        expr: max(recsys:request_latency_seconds:p95_5m) > 0.1
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "Recommendation P95 latency above the 100 ms SLO"
+          description: "P95 has been {{ $value | humanizeDuration }} for 5 minutes."
+
+      - alert: RecsysHighErrorRate
+        expr: recsys:request_error_ratio:5m > 0.01
+        for: 5m
+        labels:
+          severity: page
+        annotations:
+          summary: "More than 1% of recommendation requests fail (5xx)"
+          description: "Error ratio is {{ $value | humanizePercentage }}."
+
+      - alert: RecsysApiDown
+        expr: up{job="recsys-api"} == 0
+        for: 1m
+        labels:
+          severity: page
+        annotations:
+          summary: "Recommendation API target is down"
+
+      - alert: RecsysChallengerLatencyRegression
+        expr: >
+          recsys:request_latency_seconds:p95_5m{variant="challenger"}
+          > on() (1.25 * recsys:request_latency_seconds:p95_5m{variant="champion"})
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Challenger model is >25% slower than the champion at P95"
+
+  - name: recsys-dependencies
+    rules:
+      - alert: RecsysCacheDegraded
+        expr: >
+          sum(rate(recsys_cache_requests_total{result=~"error|bypass"}[5m]))
+          / clamp_min(sum(rate(recsys_cache_requests_total[5m])), 1e-9) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis response cache is failing or bypassed (requests served uncached)"
+
+      - alert: RecsysFeatureStoreErrors
+        expr: rate(recsys_feature_store_errors_total[5m]) > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Online feature lookups failing - serving without real-time context"
+
+  - name: recsys-model-quality
+    rules:
+      - alert: RecsysFeatureDrift
+        expr: max by (feature) (recsys_drift_psi) > 0.2
+        labels:
+          severity: warning
+        annotations:
+          summary: "PSI drift above 0.2 on {{ $labels.feature }} - consider retraining"
+
+      - alert: RecsysDriftJobStale
+        expr: time() - recsys_drift_last_run_timestamp_seconds > 2 * 3600
+        labels:
+          severity: warning
+        annotations:
+          summary: "Drift monitoring job has not reported for more than 2 hours"

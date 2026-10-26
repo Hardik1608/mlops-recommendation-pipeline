@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mlops-recommendation-pipeline"
+version = "0.1.0"
+description = "End-to-end MLOps recommendation pipeline: Kafka streaming, Feast features, ALS models tracked in MLflow, FastAPI serving with A/B routing, Prometheus/Grafana monitoring, Helm on Kubernetes."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Hardik Soni" }]
+# Runtime dependencies live in requirements.txt (bounded ranges, installed in Docker/CI).
+dependencies = []
+
+[project.scripts]
+recsys = "recsys.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+extend-exclude = [".venv", "data", "mlruns", "artifacts"]
+
+[tool.ruff.lint]
+select = [
+  "E",   # pycodestyle errors
+  "W",   # pycodestyle warnings
+  "F",   # pyflakes
+  "I",   # isort
+  "B",   # bugbear
+  "UP",  # pyupgrade
+  "SIM", # simplify
+  "C4",  # comprehensions
+  "RUF", # ruff-specific
+  "PTH", # use pathlib
+  "N",   # naming
+]
+ignore = [
+  "N803", # argument names like X/K are idiomatic in linear algebra code
+  "N806", # variable names like X/Y/A are idiomatic in linear algebra code
+  "RUF012",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["B011"]
+"dags/**" = ["PTH"]
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --strict-markers"
+markers = [
+  "integration: exercises several components together (still offline, no network)",
+  "slow: takes more than a few seconds",
+]
+filterwarnings = [
+  "ignore::DeprecationWarning",
+  "ignore::FutureWarning",
+  "ignore::UserWarning",
+]
+
+[tool.coverage.run]
+source = ["recsys"]
+omit = ["src/recsys/streaming/kafka_io.py"]
+
+[tool.coverage.report]
+show_missing = false
+skip_covered = true

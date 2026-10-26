@@ -1,0 +1,37 @@
+# Experiment: SASRec (configs/ml-1m.yaml `sequential` block) as the candidate model.
+# Needs torch to train (requirements-gpu.txt; the CPU wheel works for ml-1m). The gate
+# compares it with the current champion on the test window; a candidate that loses can
+# still be measured on live traffic with `recsys shadow --version N` (never served).
+dataset: ml-1m
+split:
+  val_fraction: 0.1
+  test_fraction: 0.1
+evaluation:
+  k: 10
+  relevance_threshold: 4.0     # a test rating >= 4 counts as relevant
+  context_events: 5            # streaming-value experiment
+model:                    # SASRec, trained on GPU (requirements-gpu.txt), served via ONNX
+  type: sasrec                 # selected by 7_ + 8_sasrec_* (configs/tuning/ml-1m-sasrec.yaml)
+  factors: 128                 # hidden size; 7_ (64 / 128)
+  max_len: 200                 # 8_ (50 / 100 / 200)
+  num_blocks: 2                # 7_ (1 / 2)
+  num_heads: 1
+  dropout: 0.2                 # 7_ (0.2 / 0.5)
+  learning_rate: 0.001         # 8_ (0.001 / 0.0005)
+  batch_size: 128
+  loss: ce                     # full softmax: the ml-1m catalogue (3.7k items) fits easily
+  epochs: 40                   # best validation epoch of the selected trial (early stopping)
+  eval_every: 5
+  patience: 5
+  popularity_half_life_days: null  # same cold-start fallback as every other model
+baseline:
+  type: popularity
+  popularity_half_life_days: null  # 1_popularity_half_life.json (no decay was best)
+explicit:                      # rating-prediction model, reported for RMSE
+  type: explicit_als
+  factors: 64                  # 5_explicit_als_factors_reg.json
+  regularization: 0.1          # 5_ + 6_explicit_als_reg.json
+  iterations: 15
+gate:
+  metric: ndcg_at_10           # challenger must strictly beat the champion on test
+  min_relative_improvement: 0.0

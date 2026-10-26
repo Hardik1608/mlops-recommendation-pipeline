@@ -1,0 +1,11 @@
+Recommendation API deployed as {{ include "recsys.fullname" . }}-api.
+
+  kubectl port-forward svc/{{ include "recsys.fullname" . }}-api 8000:{{ .Values.api.service.port }}
+  curl "http://localhost:8000/recommendations/42?k=10"
+
+Autoscaling: {{ if .Values.api.autoscaling.enabled }}HPA {{ .Values.api.autoscaling.minReplicas }}-{{ .Values.api.autoscaling.maxReplicas }} replicas at {{ .Values.api.autoscaling.targetCPUUtilizationPercentage }}% CPU{{ else }}disabled ({{ .Values.api.replicaCount }} replicas){{ end }}.
+A/B: {{ .Values.config.RECSYS_CHALLENGER_TRAFFIC }} of users -> challenger (MLflow alias "challenger").
+
+Dependencies expected in the cluster: Kafka ({{ .Values.config.RECSYS_KAFKA_BOOTSTRAP_SERVERS }}),
+Redis ({{ .Values.config.RECSYS_REDIS_URL }}), MLflow ({{ .Values.config.MLFLOW_TRACKING_URI }})
+and the Secret "{{ .Values.existingSecret }}" with FEAST_REGISTRY_URL.

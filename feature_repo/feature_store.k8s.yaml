@@ -1,0 +1,20 @@
+# Kubernetes: every pod (API, stream consumer, training jobs) shares one SQL registry
+# (Postgres) and the Redis online store. Values come from the environment / a Secret:
+#   FEAST_REGISTRY_URL=postgresql+psycopg://feast:<password>@postgres.data:5432/feast
+#   FEAST_REDIS_CONNECTION_STRING=redis-master.data:6379,db=1
+project: recsys
+provider: local
+registry:
+  registry_type: sql
+  path: ${FEAST_REGISTRY_URL}
+  cache_ttl_seconds: 60
+  sqlalchemy_config_kwargs:
+    pool_pre_ping: true
+online_store:
+  type: redis
+  connection_string: ${FEAST_REDIS_CONNECTION_STRING}
+offline_store:
+  type: file
+entity_key_serialization_version: 3
+auth:
+  type: no_auth

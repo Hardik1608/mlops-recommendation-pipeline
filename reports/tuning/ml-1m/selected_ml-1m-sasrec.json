@@ -1,0 +1,11 @@
+{
+  "sasrec": {
+    "factors": 128,
+    "dropout": 0.2,
+    "num_blocks": 2,
+    "max_len": 200,
+    "learning_rate": 0.001,
+    "selected_by": "8_sasrec_max_len_lr (warm_ndcg_at_10)",
+    "epochs": 40
+  }
+}

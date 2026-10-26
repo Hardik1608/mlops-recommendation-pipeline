@@ -1,0 +1,33 @@
+# Training configuration for MovieLens ml-latest-small (default dataset for local runs).
+# Hyper-parameters were selected on the VALIDATION window (train -> val) by `recsys tune`;
+# grids and scores: reports/tuning/ml-latest-small/. Caveat: only 21 validation users are
+# "warm" in this dataset, so selection here is noisy - ml-1m is the robust benchmark.
+dataset: ml-latest-small
+split:
+  val_fraction: 0.1
+  test_fraction: 0.1
+evaluation:
+  k: 10
+  relevance_threshold: 4.0
+  context_events: 5
+model:
+  type: implicit_als
+  factors: 64
+  regularization: 10.0          # 2_implicit_als_alpha_reg_weighting.json
+  alpha: 20.0                   # 2_
+  weighting: rating             # 2_
+  iterations: 15
+  popularity_half_life_days: 90   # cold-start fallback = tuned baseline (1_)
+  blend_half_life_days: 14    # 4_implicit_als_popularity_blend.json
+  blend_weight: 10.0            # 4_
+baseline:
+  type: popularity
+  popularity_half_life_days: 90 # 1_popularity_half_life.json
+explicit:
+  type: explicit_als
+  factors: 64                   # 5_explicit_als_factors_reg.json
+  regularization: 0.02          # 5_ + 6_explicit_als_reg.json
+  iterations: 15
+gate:
+  metric: ndcg_at_10
+  min_relative_improvement: 0.0

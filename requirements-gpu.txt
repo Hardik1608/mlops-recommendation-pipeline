@@ -1,0 +1,8 @@
+# SASRec training (GPU box). The API and the Docker image do not need any of this:
+# SASRec is served from its ONNX export with onnxruntime (requirements.txt).
+# On Linux the PyPI torch wheel ships with CUDA; on Windows/CPU-only machines install torch
+# from https://download.pytorch.org/whl/cpu first.
+-r requirements.txt
+torch>=2.4
+onnx>=1.16
+onnxscript>=0.2          # torch.onnx's dynamo exporter (fallback when the TorchScript one is gone)

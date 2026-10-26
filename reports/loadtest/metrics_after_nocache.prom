@@ -1,0 +1,178 @@
+# HELP python_gc_objects_collected_total Objects collected during gc
+# TYPE python_gc_objects_collected_total counter
+python_gc_objects_collected_total{generation="0"} 1036.0
+python_gc_objects_collected_total{generation="1"} 2003.0
+python_gc_objects_collected_total{generation="2"} 20.0
+# HELP python_gc_objects_uncollectable_total Uncollectable objects found during GC
+# TYPE python_gc_objects_uncollectable_total counter
+python_gc_objects_uncollectable_total{generation="0"} 0.0
+python_gc_objects_uncollectable_total{generation="1"} 0.0
+python_gc_objects_uncollectable_total{generation="2"} 0.0
+# HELP python_gc_collections_total Number of times this generation was collected
+# TYPE python_gc_collections_total counter
+python_gc_collections_total{generation="0"} 337.0
+python_gc_collections_total{generation="1"} 30.0
+python_gc_collections_total{generation="2"} 2.0
+# HELP python_info Python platform information
+# TYPE python_info gauge
+python_info{implementation="CPython",major="3",minor="11",patchlevel="9",version="3.11.9"} 1.0
+# HELP recsys_http_requests_total HTTP requests by route, method, status code and A/B variant.
+# TYPE recsys_http_requests_total counter
+recsys_http_requests_total{method="GET",route="/ready",status="200",variant="none"} 6.0
+recsys_http_requests_total{method="GET",route="/recommendations/{user_id}",status="200",variant="champion"} 49754.0
+recsys_http_requests_total{method="GET",route="/recommendations/{user_id}",status="200",variant="challenger"} 6088.0
+recsys_http_requests_total{method="GET",route="/metrics",status="200",variant="none"} 8.0
+# HELP recsys_http_requests_created HTTP requests by route, method, status code and A/B variant.
+# TYPE recsys_http_requests_created gauge
+recsys_http_requests_created{method="GET",route="/ready",status="200",variant="none"} 1.7914598712447484e+09
+recsys_http_requests_created{method="GET",route="/recommendations/{user_id}",status="200",variant="champion"} 1.7914598717760653e+09
+recsys_http_requests_created{method="GET",route="/recommendations/{user_id}",status="200",variant="challenger"} 1.7914598717927928e+09
+recsys_http_requests_created{method="GET",route="/metrics",status="200",variant="none"} 1.791459872131913e+09
+# HELP recsys_http_request_duration_seconds End-to-end request latency inside the service.
+# TYPE recsys_http_request_duration_seconds histogram
+recsys_http_request_duration_seconds_bucket{le="0.001",route="/ready",variant="none"} 2.0
+recsys_http_request_duration_seconds_bucket{le="0.0025",route="/ready",variant="none"} 5.0
+recsys_http_request_duration_seconds_bucket{le="0.005",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="0.0075",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="0.01",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="0.025",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="0.05",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="0.075",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="0.1",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="0.25",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="0.5",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="1.0",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="2.5",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="+Inf",route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_count{route="/ready",variant="none"} 6.0
+recsys_http_request_duration_seconds_sum{route="/ready",variant="none"} 0.009567099999003403
+recsys_http_request_duration_seconds_bucket{le="0.001",route="/recommendations/{user_id}",variant="champion"} 3482.0
+recsys_http_request_duration_seconds_bucket{le="0.0025",route="/recommendations/{user_id}",variant="champion"} 49042.0
+recsys_http_request_duration_seconds_bucket{le="0.005",route="/recommendations/{user_id}",variant="champion"} 49698.0
+recsys_http_request_duration_seconds_bucket{le="0.0075",route="/recommendations/{user_id}",variant="champion"} 49750.0
+recsys_http_request_duration_seconds_bucket{le="0.01",route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_bucket{le="0.025",route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_bucket{le="0.05",route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_bucket{le="0.075",route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_bucket{le="0.1",route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_bucket{le="0.25",route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_bucket{le="0.5",route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_bucket{le="1.0",route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_bucket{le="2.5",route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_bucket{le="+Inf",route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_count{route="/recommendations/{user_id}",variant="champion"} 49754.0
+recsys_http_request_duration_seconds_sum{route="/recommendations/{user_id}",variant="champion"} 68.66649739994955
+recsys_http_request_duration_seconds_bucket{le="0.001",route="/recommendations/{user_id}",variant="challenger"} 329.0
+recsys_http_request_duration_seconds_bucket{le="0.0025",route="/recommendations/{user_id}",variant="challenger"} 5837.0
+recsys_http_request_duration_seconds_bucket{le="0.005",route="/recommendations/{user_id}",variant="challenger"} 6075.0
+recsys_http_request_duration_seconds_bucket{le="0.0075",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_bucket{le="0.01",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_bucket{le="0.025",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_bucket{le="0.05",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_bucket{le="0.075",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_bucket{le="0.1",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_bucket{le="0.25",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_bucket{le="0.5",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_bucket{le="1.0",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_bucket{le="2.5",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_bucket{le="+Inf",route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_count{route="/recommendations/{user_id}",variant="challenger"} 6088.0
+recsys_http_request_duration_seconds_sum{route="/recommendations/{user_id}",variant="challenger"} 9.286157300008199
+recsys_http_request_duration_seconds_bucket{le="0.001",route="/metrics",variant="none"} 0.0
+recsys_http_request_duration_seconds_bucket{le="0.0025",route="/metrics",variant="none"} 0.0
+recsys_http_request_duration_seconds_bucket{le="0.005",route="/metrics",variant="none"} 6.0
+recsys_http_request_duration_seconds_bucket{le="0.0075",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_bucket{le="0.01",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_bucket{le="0.025",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_bucket{le="0.05",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_bucket{le="0.075",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_bucket{le="0.1",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_bucket{le="0.25",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_bucket{le="0.5",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_bucket{le="1.0",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_bucket{le="2.5",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_bucket{le="+Inf",route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_count{route="/metrics",variant="none"} 8.0
+recsys_http_request_duration_seconds_sum{route="/metrics",variant="none"} 0.03443690000131028
+# HELP recsys_http_request_duration_seconds_created End-to-end request latency inside the service.
+# TYPE recsys_http_request_duration_seconds_created gauge
+recsys_http_request_duration_seconds_created{route="/ready",variant="none"} 1.7914598712447484e+09
+recsys_http_request_duration_seconds_created{route="/recommendations/{user_id}",variant="champion"} 1.7914598717760653e+09
+recsys_http_request_duration_seconds_created{route="/recommendations/{user_id}",variant="challenger"} 1.7914598717927928e+09
+recsys_http_request_duration_seconds_created{route="/metrics",variant="none"} 1.791459872131913e+09
+# HELP recsys_recommendations_total Recommendation responses by variant and serving strategy.
+# TYPE recsys_recommendations_total counter
+recsys_recommendations_total{strategy="personalized",variant="champion"} 44706.0
+recsys_recommendations_total{strategy="popularity",variant="champion"} 5048.0
+recsys_recommendations_total{strategy="personalized",variant="challenger"} 5600.0
+recsys_recommendations_total{strategy="popularity",variant="challenger"} 488.0
+# HELP recsys_recommendations_created Recommendation responses by variant and serving strategy.
+# TYPE recsys_recommendations_created gauge
+recsys_recommendations_created{strategy="personalized",variant="champion"} 1.7914598717760653e+09
+recsys_recommendations_created{strategy="popularity",variant="champion"} 1.7914598717778318e+09
+recsys_recommendations_created{strategy="personalized",variant="challenger"} 1.7914598717849238e+09
+recsys_recommendations_created{strategy="popularity",variant="challenger"} 1.7914598719698386e+09
+# HELP recsys_cache_requests_total Response-cache operations by result (hit|miss|error|bypass|set_error).
+# TYPE recsys_cache_requests_total counter
+recsys_cache_requests_total{result="bypass"} 55842.0
+# HELP recsys_cache_requests_created Response-cache operations by result (hit|miss|error|bypass|set_error).
+# TYPE recsys_cache_requests_created gauge
+recsys_cache_requests_created{result="bypass"} 1.7914598717740443e+09
+# HELP recsys_cold_start_total Requests for users unknown to the model, by fallback strategy (fold_in|popularity).
+# TYPE recsys_cold_start_total counter
+recsys_cold_start_total{strategy="popularity"} 5536.0
+# HELP recsys_cold_start_created Requests for users unknown to the model, by fallback strategy (fold_in|popularity).
+# TYPE recsys_cold_start_created gauge
+recsys_cold_start_created{strategy="popularity"} 1.7914598717778318e+09
+# HELP recsys_feature_store_errors_total Online feature lookups that failed (request served without real-time context).
+# TYPE recsys_feature_store_errors_total counter
+recsys_feature_store_errors_total 0.0
+# HELP recsys_feature_store_errors_created Online feature lookups that failed (request served without real-time context).
+# TYPE recsys_feature_store_errors_created gauge
+recsys_feature_store_errors_created 1.7914598691855562e+09
+# HELP recsys_model_compute_seconds Time spent in model scoring + top-k (excludes cache and feature lookups).
+# TYPE recsys_model_compute_seconds histogram
+recsys_model_compute_seconds_bucket{le="0.001",variant="champion"} 48991.0
+recsys_model_compute_seconds_bucket{le="0.0025",variant="champion"} 49700.0
+recsys_model_compute_seconds_bucket{le="0.005",variant="champion"} 49752.0
+recsys_model_compute_seconds_bucket{le="0.0075",variant="champion"} 49754.0
+recsys_model_compute_seconds_bucket{le="0.01",variant="champion"} 49754.0
+recsys_model_compute_seconds_bucket{le="0.025",variant="champion"} 49754.0
+recsys_model_compute_seconds_bucket{le="0.05",variant="champion"} 49754.0
+recsys_model_compute_seconds_bucket{le="0.075",variant="champion"} 49754.0
+recsys_model_compute_seconds_bucket{le="0.1",variant="champion"} 49754.0
+recsys_model_compute_seconds_bucket{le="0.25",variant="champion"} 49754.0
+recsys_model_compute_seconds_bucket{le="0.5",variant="champion"} 49754.0
+recsys_model_compute_seconds_bucket{le="1.0",variant="champion"} 49754.0
+recsys_model_compute_seconds_bucket{le="2.5",variant="champion"} 49754.0
+recsys_model_compute_seconds_bucket{le="+Inf",variant="champion"} 49754.0
+recsys_model_compute_seconds_count{variant="champion"} 49754.0
+recsys_model_compute_seconds_sum{variant="champion"} 23.490976400016734
+recsys_model_compute_seconds_bucket{le="0.001",variant="challenger"} 5494.0
+recsys_model_compute_seconds_bucket{le="0.0025",variant="challenger"} 6077.0
+recsys_model_compute_seconds_bucket{le="0.005",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="0.0075",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="0.01",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="0.025",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="0.05",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="0.075",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="0.1",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="0.25",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="0.5",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="1.0",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="2.5",variant="challenger"} 6088.0
+recsys_model_compute_seconds_bucket{le="+Inf",variant="challenger"} 6088.0
+recsys_model_compute_seconds_count{variant="challenger"} 6088.0
+recsys_model_compute_seconds_sum{variant="challenger"} 3.694442400047592
+# HELP recsys_model_compute_seconds_created Time spent in model scoring + top-k (excludes cache and feature lookups).
+# TYPE recsys_model_compute_seconds_created gauge
+recsys_model_compute_seconds_created{variant="champion"} 1.7914598717740443e+09
+recsys_model_compute_seconds_created{variant="challenger"} 1.7914598717849238e+09
+# HELP recsys_model_info Loaded model metadata (value is always 1).
+# TYPE recsys_model_info gauge
+recsys_model_info{model_type="implicit_als",variant="champion",version="1"} 1.0
+recsys_model_info{model_type="implicit_als",variant="challenger",version="2"} 1.0
+# HELP recsys_model_loaded_timestamp_seconds Unix time at which the variant's model was loaded.
+# TYPE recsys_model_loaded_timestamp_seconds gauge
+recsys_model_loaded_timestamp_seconds{variant="champion"} 1.7914598705395696e+09
+recsys_model_loaded_timestamp_seconds{variant="challenger"} 1.791459870618117e+09

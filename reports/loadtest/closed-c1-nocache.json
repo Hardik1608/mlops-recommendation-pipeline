@@ -1,0 +1,87 @@
+{
+  "label": "closed-c1-nocache",
+  "mode": "closed-loop",
+  "config": {
+    "url": "http://127.0.0.1:8000",
+    "rate_rps": null,
+    "concurrency": 1,
+    "duration_s": 20.0,
+    "k": 10,
+    "cold_fraction": 0.1,
+    "sampled_users": 563,
+    "users_from_events": null,
+    "warmup_requests": 200
+  },
+  "requests": 9739,
+  "ok": 9739,
+  "errors": 0,
+  "elapsed_s": 20.0,
+  "throughput_rps": 486.9,
+  "client_latency": {
+    "p50_ms": 1.878,
+    "p90_ms": 2.641,
+    "p95_ms": 2.976,
+    "p99_ms": 3.663,
+    "max_ms": 6.688,
+    "mean_ms": 1.971
+  },
+  "client_latency_from_send": {
+    "p50_ms": 1.877,
+    "p90_ms": 2.639,
+    "p95_ms": 2.975,
+    "p99_ms": 3.661,
+    "max_ms": 6.687,
+    "mean_ms": 1.97
+  },
+  "dispatch_lag": {
+    "p50_ms": 0.001,
+    "p90_ms": 0.002,
+    "p95_ms": 0.002,
+    "p99_ms": 0.002,
+    "max_ms": 0.026,
+    "mean_ms": 0.001
+  },
+  "server_latency_from_histogram": {
+    "p50_ms": 1.689,
+    "p95_ms": 2.438,
+    "p99_ms": 3.077
+  },
+  "status_codes": {
+    "200": 9739
+  },
+  "strategies": {
+    "popularity": 969,
+    "personalized": 8770
+  },
+  "variants": {
+    "champion": 8685,
+    "challenger": 1054
+  },
+  "cache_hit_ratio": 0.0,
+  "server": {
+    "cache_backend": "none",
+    "models": [
+      [
+        "champion",
+        "implicit_als",
+        "1",
+        8586
+      ],
+      [
+        "challenger",
+        "implicit_als",
+        "2",
+        8586
+      ]
+    ]
+  },
+  "hardware": {
+    "cpu": "13th Gen Intel(R) Core(TM) i7-13620H",
+    "logical_cpus": 16,
+    "ram_gb": 15.6,
+    "os": "Windows 10 (10.0.26200)",
+    "python": "3.11.9",
+    "recorded_at": "2026-10-08T11:44:52+00:00"
+  },
+  "note": "load generator and API ran on the same machine (shared CPU)"
+}

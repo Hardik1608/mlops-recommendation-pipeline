@@ -1,0 +1,156 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: "3.11"
+  MLFLOW_DISABLE_AGENT_HINT: "1"
+
+jobs:
+  lint:
+    name: Lint (ruff)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - run: pip install "ruff>=0.6,<1"
+      - run: ruff check .
+      - run: ruff format --check .
+
+  test:
+    name: Tests (pytest, synthetic data - no downloads)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - run: pip install -r requirements-dev.txt && pip install --no-deps -e .
+      - name: CPU PyTorch for the SASRec tests (training only; the API never imports torch)
+        run: |
+          pip install torch --index-url https://download.pytorch.org/whl/cpu
+          pip install "onnx>=1.16" "onnxscript>=0.2"
+      - name: pytest (unit + integration incl. MLflow registry and Feast)
+        run: pytest --cov=recsys --cov-report=term --cov-report=xml
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage.xml
+
+  e2e-smoke:
+    name: End-to-end smoke (CLI -> MLflow -> API -> load test)
+    runs-on: ubuntu-latest
+    needs: test
+    env:
+      RECSYS_DATASET: synthetic
+      RECSYS_CACHE_BACKEND: memory
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - run: pip install -r requirements.txt && pip install --no-deps -e .
+      - name: Prepare, train, register (synthetic dataset)
+        run: |
+          recsys synth
+          recsys prepare
+          recsys train
+          recsys stream --limit 500
+          recsys drift
+      - name: Serve and load-test
+        run: |
+          recsys serve --port 8000 &
+          for i in $(seq 1 60); do curl -fs http://127.0.0.1:8000/ready && break; sleep 1; done
+          curl -fs "http://127.0.0.1:8000/recommendations/1?k=5"
+          python -m recsys.loadtest --rate 100 --duration 10 --warmup 50 --label ci-smoke
+      - uses: actions/upload-artifact@v4
+        with:
+          name: smoke-reports
+          path: reports/
+
+  docker:
+    name: Docker build + compose validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hadolint/hadolint-action@v3.1.0
+        with:
+          dockerfile: Dockerfile
+          failure-threshold: error
+      - uses: docker/setup-buildx-action@v3
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: recsys:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Image smoke test
+        run: docker run --rm recsys:ci recsys --help
+      - name: Validate docker-compose (all profiles)
+        run: |
+          docker compose -f docker-compose.yml config -q
+          docker compose -f docker-compose.yml --profile jobs --profile airflow config -q
+
+  helm:
+    name: Helm lint + schema validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+        with:
+          version: v3.19.0
+      - run: helm lint deploy/helm/recsys --strict
+      - name: Render and validate against Kubernetes schemas
+        run: |
+          curl -sSL https://github.com/yannh/kubeconform/releases/download/v0.8.0/kubeconform-linux-amd64.tar.gz | tar xz
+          helm template ci deploy/helm/recsys | ./kubeconform -strict -summary -kubernetes-version 1.31.0
+          helm template ci deploy/helm/recsys --set serviceMonitor.enabled=true \
+            | ./kubeconform -strict -summary -ignore-missing-schemas -kubernetes-version 1.31.0
+
+  monitoring:
+    name: Prometheus rules (promtool)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: promtool check + unit-test alert rules
+        run: |
+          docker run --rm -v "$PWD/deploy/prometheus:/etc/prometheus" --entrypoint promtool \
+            prom/prometheus:v3.13.4 check config /etc/prometheus/prometheus.yml
+          docker run --rm -v "$PWD/deploy/prometheus:/etc/prometheus" -w /etc/prometheus --entrypoint promtool \
+            prom/prometheus:v3.13.4 test rules alerts_test.yml
+
+  airflow-dags:
+    name: Airflow DAG integrity
+    runs-on: ubuntu-latest
+    env:
+      AIRFLOW_HOME: ${{ github.workspace }}/.airflow
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+      - name: Install Airflow with its constraints file (project deps are not needed to parse DAGs)
+        run: |
+          pip install "apache-airflow==3.3.2" pytest \
+            --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-3.3.2/constraints-3.11.txt"
+      - run: pytest tests/dag_integrity --noconftest -p no:cacheprovider -q

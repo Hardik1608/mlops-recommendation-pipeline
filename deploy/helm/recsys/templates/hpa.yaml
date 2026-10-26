@@ -1,0 +1,30 @@
+{{- if .Values.api.autoscaling.enabled }}
+# CPU-based autoscaling: the request path is CPU-bound (scoring + JSON), one uvicorn worker
+# per pod, so CPU utilisation tracks load closely. For request-rate based scaling, expose
+# recsys_http_requests_total through prometheus-adapter and add a Pods metric here.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "recsys.fullname" . }}-api
+  labels:
+    {{- include "recsys.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "recsys.fullname" . }}-api
+  minReplicas: {{ .Values.api.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.api.autoscaling.maxReplicas }}
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.api.autoscaling.targetCPUUtilizationPercentage }}
+  {{- with .Values.api.autoscaling.behavior }}
+  behavior:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}

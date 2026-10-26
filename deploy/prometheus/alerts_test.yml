@@ -1,0 +1,85 @@
+# Unit tests for the alerting rules:  promtool test rules deploy/prometheus/alerts_test.yml
+rule_files:
+  - alerts.yml
+
+evaluation_interval: 1m
+
+tests:
+  # Slow service: 100 req/min, all between 100 ms and 250 ms -> P95 = 242.5 ms (linear interp.)
+  - interval: 1m
+    input_series:
+      - series: 'recsys_http_request_duration_seconds_bucket{route="/recommendations/{user_id}",variant="champion",le="0.1"}'
+        values: "0+0x20"
+      - series: 'recsys_http_request_duration_seconds_bucket{route="/recommendations/{user_id}",variant="champion",le="0.25"}'
+        values: "0+100x20"
+      - series: 'recsys_http_request_duration_seconds_bucket{route="/recommendations/{user_id}",variant="champion",le="+Inf"}'
+        values: "0+100x20"
+    alert_rule_test:
+      - eval_time: 4m
+        alertname: RecsysHighP95Latency
+        exp_alerts: []  # pending: the condition must hold for 5 minutes
+      - eval_time: 15m
+        alertname: RecsysHighP95Latency
+        exp_alerts:
+          - exp_labels:
+              severity: page
+            exp_annotations:
+              summary: "Recommendation P95 latency above the 100 ms SLO"
+              description: "P95 has been 242.5ms for 5 minutes."
+
+  # Healthy service: everything under 10 ms -> no latency alert
+  - interval: 1m
+    input_series:
+      - series: 'recsys_http_request_duration_seconds_bucket{route="/recommendations/{user_id}",variant="champion",le="0.01"}'
+        values: "0+100x20"
+      - series: 'recsys_http_request_duration_seconds_bucket{route="/recommendations/{user_id}",variant="champion",le="+Inf"}'
+        values: "0+100x20"
+    alert_rule_test:
+      - eval_time: 15m
+        alertname: RecsysHighP95Latency
+        exp_alerts: []
+
+  # 5% of requests return 500 -> error-rate alert
+  - interval: 1m
+    input_series:
+      - series: 'recsys_http_requests_total{route="/recommendations/{user_id}",method="GET",status="200",variant="champion"}'
+        values: "0+95x20"
+      - series: 'recsys_http_requests_total{route="/recommendations/{user_id}",method="GET",status="500",variant="champion"}'
+        values: "0+5x20"
+    alert_rule_test:
+      - eval_time: 15m
+        alertname: RecsysHighErrorRate
+        exp_alerts:
+          - exp_labels:
+              severity: page
+            exp_annotations:
+              summary: "More than 1% of recommendation requests fail (5xx)"
+              description: "Error ratio is 5%."
+
+  # Scrape target down, and a drift job reporting PSI above threshold
+  - interval: 1m
+    input_series:
+      - series: 'up{job="recsys-api",instance="api:8000"}'
+        values: "0x5"
+      - series: 'recsys_drift_psi{feature="item_popularity",job="recsys_drift"}'
+        values: "0.35x5"
+      - series: 'recsys_drift_psi{feature="rating",job="recsys_drift"}'
+        values: "0.05x5"
+    alert_rule_test:
+      - eval_time: 2m
+        alertname: RecsysApiDown
+        exp_alerts:
+          - exp_labels:
+              severity: page
+              job: recsys-api
+              instance: "api:8000"
+            exp_annotations:
+              summary: "Recommendation API target is down"
+      - eval_time: 1m
+        alertname: RecsysFeatureDrift
+        exp_alerts:
+          - exp_labels:
+              severity: warning
+              feature: item_popularity
+            exp_annotations:
+              summary: "PSI drift above 0.2 on item_popularity - consider retraining"

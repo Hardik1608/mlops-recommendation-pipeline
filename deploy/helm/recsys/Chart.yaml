@@ -1,0 +1,19 @@
+apiVersion: v2
+name: recsys
+description: >-
+  Recommendation API (FastAPI) and Kafka stream consumer of the MLOps recommendation
+  pipeline. Kafka, Redis, Postgres (Feast registry) and MLflow are expected to be
+  installed separately (their own charts / managed services).
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - recommendation
+  - mlops
+  - fastapi
+  - kafka
+  - feast
+  - mlflow
+maintainers:
+  - name: Hardik Soni
+    url: https://github.com/Hardik1608

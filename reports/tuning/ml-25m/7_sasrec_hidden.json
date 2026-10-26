@@ -1,0 +1,386 @@
+{
+  "dataset": "ml-25m",
+  "model_type": "sasrec",
+  "selection_metric": "warm_ndcg_at_10",
+  "split": "train -> val",
+  "grid": {
+    "loss": [
+      "sampled_ce"
+    ],
+    "factors": [
+      64,
+      128
+    ]
+  },
+  "best": {
+    "params": {
+      "loss": "sampled_ce",
+      "factors": 64
+    },
+    "metrics": {
+      "warm_precision_at_10": 0.0959409594095941,
+      "warm_recall_at_10": 0.04680195236332365,
+      "warm_ndcg_at_10": 0.10982301214906062,
+      "warm_map_at_10": 0.05497841569894396,
+      "warm_hit_rate_at_10": 0.45562245096135173,
+      "warm_n_users": 5149.0,
+      "cold_precision_at_10": 0.32723263506063943,
+      "cold_recall_at_10": 0.06480979706738525,
+      "cold_ndcg_at_10": 0.3515980786764022,
+      "cold_map_at_10": 0.2223003664285756,
+      "cold_hit_rate_at_10": 0.8734446369507008,
+      "cold_n_users": 12698.0,
+      "precision_at_10": 0.26050316579817334,
+      "recall_at_10": 0.05961439210401812,
+      "ndcg_at_10": 0.2818440686159281,
+      "map_at_10": 0.17402666640577774,
+      "hit_rate_at_10": 0.7528996469994957,
+      "n_users": 17847.0,
+      "coverage_at_10": 0.06909259742897768
+    },
+    "fit_seconds": 373.98258692699983,
+    "training": {
+      "best_epoch": 14,
+      "epochs_run": 20,
+      "device": "cuda",
+      "peak_vram_gb": 0.399,
+      "onnx_max_abs_diff": 4.76837158203125e-06,
+      "train_sequences": 137871,
+      "seconds_per_epoch": 17.11710789455003,
+      "curve": [
+        {
+          "iteration": 1,
+          "loss": 4.020333009418922
+        },
+        {
+          "iteration": 2,
+          "loss": 3.361127020422101,
+          "val_metric": 0.08886893313489767
+        },
+        {
+          "iteration": 3,
+          "loss": 3.1967381777177
+        },
+        {
+          "iteration": 4,
+          "loss": 3.128341237574885,
+          "val_metric": 0.10154459618658128
+        },
+        {
+          "iteration": 5,
+          "loss": 3.0862724483428035
+        },
+        {
+          "iteration": 6,
+          "loss": 3.0553479799814953,
+          "val_metric": 0.09967667045854042
+        },
+        {
+          "iteration": 7,
+          "loss": 3.0358021388750895
+        },
+        {
+          "iteration": 8,
+          "loss": 3.018726453759001,
+          "val_metric": 0.09928053351043419
+        },
+        {
+          "iteration": 9,
+          "loss": 3.0136542690878954
+        },
+        {
+          "iteration": 10,
+          "loss": 2.995124083384007,
+          "val_metric": 0.10536865979076582
+        },
+        {
+          "iteration": 11,
+          "loss": 2.984263402182099
+        },
+        {
+          "iteration": 12,
+          "loss": 2.9828473892123406,
+          "val_metric": 0.10311985363461414
+        },
+        {
+          "iteration": 13,
+          "loss": 2.976198269319645
+        },
+        {
+          "iteration": 14,
+          "loss": 2.96776157078223,
+          "val_metric": 0.10990888354130927
+        },
+        {
+          "iteration": 15,
+          "loss": 2.96088278465094
+        },
+        {
+          "iteration": 16,
+          "loss": 2.958270430841468,
+          "val_metric": 0.10640552077836331
+        },
+        {
+          "iteration": 17,
+          "loss": 2.958282906826577
+        },
+        {
+          "iteration": 18,
+          "loss": 2.951188215689427,
+          "val_metric": 0.10807366745805881
+        },
+        {
+          "iteration": 19,
+          "loss": 2.950613438280995
+        },
+        {
+          "iteration": 20,
+          "loss": 2.9471329687919527,
+          "val_metric": 0.10711746775996678
+        }
+      ]
+    }
+  },
+  "results": [
+    {
+      "params": {
+        "loss": "sampled_ce",
+        "factors": 64
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.0959409594095941,
+        "warm_recall_at_10": 0.04680195236332365,
+        "warm_ndcg_at_10": 0.10982301214906062,
+        "warm_map_at_10": 0.05497841569894396,
+        "warm_hit_rate_at_10": 0.45562245096135173,
+        "warm_n_users": 5149.0,
+        "cold_precision_at_10": 0.32723263506063943,
+        "cold_recall_at_10": 0.06480979706738525,
+        "cold_ndcg_at_10": 0.3515980786764022,
+        "cold_map_at_10": 0.2223003664285756,
+        "cold_hit_rate_at_10": 0.8734446369507008,
+        "cold_n_users": 12698.0,
+        "precision_at_10": 0.26050316579817334,
+        "recall_at_10": 0.05961439210401812,
+        "ndcg_at_10": 0.2818440686159281,
+        "map_at_10": 0.17402666640577774,
+        "hit_rate_at_10": 0.7528996469994957,
+        "n_users": 17847.0,
+        "coverage_at_10": 0.06909259742897768
+      },
+      "fit_seconds": 373.98258692699983,
+      "training": {
+        "best_epoch": 14,
+        "epochs_run": 20,
+        "device": "cuda",
+        "peak_vram_gb": 0.399,
+        "onnx_max_abs_diff": 4.76837158203125e-06,
+        "train_sequences": 137871,
+        "seconds_per_epoch": 17.11710789455003,
+        "curve": [
+          {
+            "iteration": 1,
+            "loss": 4.020333009418922
+          },
+          {
+            "iteration": 2,
+            "loss": 3.361127020422101,
+            "val_metric": 0.08886893313489767
+          },
+          {
+            "iteration": 3,
+            "loss": 3.1967381777177
+          },
+          {
+            "iteration": 4,
+            "loss": 3.128341237574885,
+            "val_metric": 0.10154459618658128
+          },
+          {
+            "iteration": 5,
+            "loss": 3.0862724483428035
+          },
+          {
+            "iteration": 6,
+            "loss": 3.0553479799814953,
+            "val_metric": 0.09967667045854042
+          },
+          {
+            "iteration": 7,
+            "loss": 3.0358021388750895
+          },
+          {
+            "iteration": 8,
+            "loss": 3.018726453759001,
+            "val_metric": 0.09928053351043419
+          },
+          {
+            "iteration": 9,
+            "loss": 3.0136542690878954
+          },
+          {
+            "iteration": 10,
+            "loss": 2.995124083384007,
+            "val_metric": 0.10536865979076582
+          },
+          {
+            "iteration": 11,
+            "loss": 2.984263402182099
+          },
+          {
+            "iteration": 12,
+            "loss": 2.9828473892123406,
+            "val_metric": 0.10311985363461414
+          },
+          {
+            "iteration": 13,
+            "loss": 2.976198269319645
+          },
+          {
+            "iteration": 14,
+            "loss": 2.96776157078223,
+            "val_metric": 0.10990888354130927
+          },
+          {
+            "iteration": 15,
+            "loss": 2.96088278465094
+          },
+          {
+            "iteration": 16,
+            "loss": 2.958270430841468,
+            "val_metric": 0.10640552077836331
+          },
+          {
+            "iteration": 17,
+            "loss": 2.958282906826577
+          },
+          {
+            "iteration": 18,
+            "loss": 2.951188215689427,
+            "val_metric": 0.10807366745805881
+          },
+          {
+            "iteration": 19,
+            "loss": 2.950613438280995
+          },
+          {
+            "iteration": 20,
+            "loss": 2.9471329687919527,
+            "val_metric": 0.10711746775996678
+          }
+        ]
+      }
+    },
+    {
+      "params": {
+        "loss": "sampled_ce",
+        "factors": 128
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.08968731792581083,
+        "warm_recall_at_10": 0.04443876745962409,
+        "warm_ndcg_at_10": 0.1041895553387788,
+        "warm_map_at_10": 0.051346374481616885,
+        "warm_hit_rate_at_10": 0.445911827539328,
+        "warm_n_users": 5149.0,
+        "cold_precision_at_10": 0.32723263506063943,
+        "cold_recall_at_10": 0.06480979706738525,
+        "cold_ndcg_at_10": 0.3515980786764022,
+        "cold_map_at_10": 0.2223003664285756,
+        "cold_hit_rate_at_10": 0.8734446369507008,
+        "cold_n_users": 12698.0,
+        "precision_at_10": 0.2586989409984871,
+        "recall_at_10": 0.05893259465519485,
+        "ndcg_at_10": 0.28021877197693323,
+        "map_at_10": 0.17297879392143767,
+        "hit_rate_at_10": 0.7500980556956351,
+        "n_users": 17847.0,
+        "coverage_at_10": 0.07747888917907199
+      },
+      "fit_seconds": 408.1679042840001,
+      "training": {
+        "best_epoch": 10,
+        "epochs_run": 16,
+        "device": "cuda",
+        "peak_vram_gb": 0.553,
+        "onnx_max_abs_diff": 4.76837158203125e-06,
+        "train_sequences": 137871,
+        "seconds_per_epoch": 23.818673503562508,
+        "curve": [
+          {
+            "iteration": 1,
+            "loss": 3.9921542585864143
+          },
+          {
+            "iteration": 2,
+            "loss": 3.254783564543226,
+            "val_metric": 0.09143917307151228
+          },
+          {
+            "iteration": 3,
+            "loss": 3.0675818680057394
+          },
+          {
+            "iteration": 4,
+            "loss": 2.9907689493936065,
+            "val_metric": 0.09643822407714508
+          },
+          {
+            "iteration": 5,
+            "loss": 2.9439912314757946
+          },
+          {
+            "iteration": 6,
+            "loss": 2.915461738148311,
+            "val_metric": 0.10019757146521328
+          },
+          {
+            "iteration": 7,
+            "loss": 2.8915057140270686
+          },
+          {
+            "iteration": 8,
+            "loss": 2.873222186117327,
+            "val_metric": 0.09559542491891057
+          },
+          {
+            "iteration": 9,
+            "loss": 2.856001722397771
+          },
+          {
+            "iteration": 10,
+            "loss": 2.842828780813726,
+            "val_metric": 0.10427155863863408
+          },
+          {
+            "iteration": 11,
+            "loss": 2.830630963805657
+          },
+          {
+            "iteration": 12,
+            "loss": 2.8274987196424446,
+            "val_metric": 0.10046656356044933
+          },
+          {
+            "iteration": 13,
+            "loss": 2.8138095241688243
+          },
+          {
+            "iteration": 14,
+            "loss": 2.8183167948800283,
+            "val_metric": 0.10412103383359614
+          },
+          {
+            "iteration": 15,
+            "loss": 2.8103009412017608
+          },
+          {
+            "iteration": 16,
+            "loss": 2.805483697019431,
+            "val_metric": 0.09959689289312484
+          }
+        ]
+      }
+    }
+  ]
+}

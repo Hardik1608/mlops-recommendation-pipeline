@@ -1,0 +1,242 @@
+{
+  "dataset": "ml-1m",
+  "model_type": "popularity",
+  "selection_metric": "ndcg_at_10",
+  "split": "train -> val",
+  "grid": {
+    "popularity_half_life_days": [
+      null,
+      3,
+      7,
+      30,
+      90,
+      365
+    ]
+  },
+  "best": {
+    "params": {
+      "popularity_half_life_days": null
+    },
+    "metrics": {
+      "warm_precision_at_10": 0.10487804878048779,
+      "warm_recall_at_10": 0.044276870154057436,
+      "warm_ndcg_at_10": 0.11816749187818669,
+      "warm_map_at_10": 0.06707478384307654,
+      "warm_hit_rate_at_10": 0.3943089430894309,
+      "warm_n_users": 492.0,
+      "cold_precision_at_10": 0.3358428805237316,
+      "cold_recall_at_10": 0.0691672490873358,
+      "cold_ndcg_at_10": 0.36276011585566226,
+      "cold_map_at_10": 0.24007922900020168,
+      "cold_hit_rate_at_10": 0.8690671031096563,
+      "cold_n_users": 611.0,
+      "precision_at_10": 0.23281958295557573,
+      "recall_at_10": 0.05806474098654437,
+      "ndcg_at_10": 0.25365805692826604,
+      "map_at_10": 0.16290952182222743,
+      "hit_rate_at_10": 0.657298277425204,
+      "n_users": 1103.0,
+      "coverage_at_10": 0.0354997269251775,
+      "rmse": 0.9707073721370568,
+      "mae": 0.7753539002474776,
+      "n_ratings": 100024.0,
+      "rmse_known_pairs": 0.910885897520863,
+      "n_known_pairs": 23844.0
+    },
+    "fit_seconds": 1.577609499999653
+  },
+  "results": [
+    {
+      "params": {
+        "popularity_half_life_days": null
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.10487804878048779,
+        "warm_recall_at_10": 0.044276870154057436,
+        "warm_ndcg_at_10": 0.11816749187818669,
+        "warm_map_at_10": 0.06707478384307654,
+        "warm_hit_rate_at_10": 0.3943089430894309,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.36276011585566226,
+        "cold_map_at_10": 0.24007922900020168,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23281958295557573,
+        "recall_at_10": 0.05806474098654437,
+        "ndcg_at_10": 0.25365805692826604,
+        "map_at_10": 0.16290952182222743,
+        "hit_rate_at_10": 0.657298277425204,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.0354997269251775,
+        "rmse": 0.9707073721370568,
+        "mae": 0.7753539002474776,
+        "n_ratings": 100024.0,
+        "rmse_known_pairs": 0.910885897520863,
+        "n_known_pairs": 23844.0
+      },
+      "fit_seconds": 1.577609499999653
+    },
+    {
+      "params": {
+        "popularity_half_life_days": 90
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.10345528455284553,
+        "warm_recall_at_10": 0.04654392316986305,
+        "warm_ndcg_at_10": 0.11703547470803666,
+        "warm_map_at_10": 0.06586852604637157,
+        "warm_hit_rate_at_10": 0.40040650406504064,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.33764320785597385,
+        "cold_recall_at_10": 0.07047414804965278,
+        "cold_ndcg_at_10": 0.36343221591665287,
+        "cold_map_at_10": 0.23970990396522313,
+        "cold_hit_rate_at_10": 0.867430441898527,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23318223028105167,
+        "recall_at_10": 0.059799922627298704,
+        "ndcg_at_10": 0.25352541929413325,
+        "map_at_10": 0.16216687773124763,
+        "hit_rate_at_10": 0.6591115140525838,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.034953577280174765,
+        "rmse": 0.9707073721370568,
+        "mae": 0.7753539002474776,
+        "n_ratings": 100024.0,
+        "rmse_known_pairs": 0.910885897520863,
+        "n_known_pairs": 23844.0
+      },
+      "fit_seconds": 2.150698200000079
+    },
+    {
+      "params": {
+        "popularity_half_life_days": 365
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.1046747967479675,
+        "warm_recall_at_10": 0.044433969348295965,
+        "warm_ndcg_at_10": 0.11757507700282033,
+        "warm_map_at_10": 0.06640696917881878,
+        "warm_hit_rate_at_10": 0.3943089430894309,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.3358428805237316,
+        "cold_recall_at_10": 0.0691672490873358,
+        "cold_ndcg_at_10": 0.3622966360000255,
+        "cold_map_at_10": 0.23940681855575469,
+        "cold_hit_rate_at_10": 0.8690671031096563,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23272892112420676,
+        "recall_at_10": 0.05813481605777316,
+        "ndcg_at_10": 0.25313706480634923,
+        "map_at_10": 0.16223916135407526,
+        "hit_rate_at_10": 0.657298277425204,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.035226652102676136,
+        "rmse": 0.9707073721370568,
+        "mae": 0.7753539002474776,
+        "n_ratings": 100024.0,
+        "rmse_known_pairs": 0.910885897520863,
+        "n_known_pairs": 23844.0
+      },
+      "fit_seconds": 3.866479899999831
+    },
+    {
+      "params": {
+        "popularity_half_life_days": 3
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.1071138211382114,
+        "warm_recall_at_10": 0.06394357434957829,
+        "warm_ndcg_at_10": 0.12253507442871663,
+        "warm_map_at_10": 0.06684373028419438,
+        "warm_hit_rate_at_10": 0.4329268292682927,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.33764320785597385,
+        "cold_recall_at_10": 0.07047414804965278,
+        "cold_ndcg_at_10": 0.355893156877317,
+        "cold_map_at_10": 0.2313781077078949,
+        "cold_hit_rate_at_10": 0.867430441898527,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23481414324569355,
+        "recall_at_10": 0.0675611450936812,
+        "ndcg_at_10": 0.2518023349691471,
+        "map_at_10": 0.15798652684437664,
+        "hit_rate_at_10": 0.6736174070716229,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.031676679410158386,
+        "rmse": 0.9707073721370568,
+        "mae": 0.7753539002474776,
+        "n_ratings": 100024.0,
+        "rmse_known_pairs": 0.910885897520863,
+        "n_known_pairs": 23844.0
+      },
+      "fit_seconds": 3.9874445999998898
+    },
+    {
+      "params": {
+        "popularity_half_life_days": 7
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.10589430894308943,
+        "warm_recall_at_10": 0.058126736329372784,
+        "warm_ndcg_at_10": 0.11955985760484673,
+        "warm_map_at_10": 0.0654790492680059,
+        "warm_hit_rate_at_10": 0.4186991869918699,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.33764320785597385,
+        "cold_recall_at_10": 0.07047414804965278,
+        "cold_ndcg_at_10": 0.3556342373253569,
+        "cold_map_at_10": 0.23104179114817416,
+        "cold_hit_rate_at_10": 0.867430441898527,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.2342701722574796,
+        "recall_at_10": 0.06496650837025318,
+        "ndcg_at_10": 0.2503317941499344,
+        "map_at_10": 0.15719150193236017,
+        "hit_rate_at_10": 0.6672710788757933,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.031676679410158386,
+        "rmse": 0.9707073721370568,
+        "mae": 0.7753539002474776,
+        "n_ratings": 100024.0,
+        "rmse_known_pairs": 0.910885897520863,
+        "n_known_pairs": 23844.0
+      },
+      "fit_seconds": 3.0501243999997314
+    },
+    {
+      "params": {
+        "popularity_half_life_days": 30
+      },
+      "metrics": {
+        "warm_precision_at_10": 0.10528455284552847,
+        "warm_recall_at_10": 0.05346688482647518,
+        "warm_ndcg_at_10": 0.11818252738438419,
+        "warm_map_at_10": 0.06549630955965643,
+        "warm_hit_rate_at_10": 0.4065040650406504,
+        "warm_n_users": 492.0,
+        "cold_precision_at_10": 0.33764320785597385,
+        "cold_recall_at_10": 0.07047414804965278,
+        "cold_ndcg_at_10": 0.3567304898811045,
+        "cold_map_at_10": 0.23196095177478157,
+        "cold_hit_rate_at_10": 0.867430441898527,
+        "cold_n_users": 611.0,
+        "precision_at_10": 0.23399818676337264,
+        "recall_at_10": 0.06288795266814473,
+        "ndcg_at_10": 0.25032468974657474,
+        "map_at_10": 0.1577083643134565,
+        "hit_rate_at_10": 0.6618313689936537,
+        "n_users": 1103.0,
+        "coverage_at_10": 0.031676679410158386,
+        "rmse": 0.9707073721370568,
+        "mae": 0.7753539002474776,
+        "n_ratings": 100024.0,
+        "rmse_known_pairs": 0.910885897520863,
+        "n_known_pairs": 23844.0
+      },
+      "fit_seconds": 2.078875799999878
+    }
+  ]
+}

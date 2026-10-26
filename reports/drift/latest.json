@@ -1,0 +1,32 @@
+{
+  "generated_at": "2026-10-08T11:37:07.368577+00:00",
+  "threshold": 0.2,
+  "n_reference": 80668,
+  "n_current": 10084,
+  "current_window": [
+    1498029450,
+    1537799250
+  ],
+  "new_item_share": 0.20120983736612455,
+  "features": {
+    "rating": {
+      "psi": 0.15667,
+      "drift": false
+    },
+    "item_popularity": {
+      "psi": 1.61502,
+      "drift": true
+    },
+    "genre": {
+      "psi": 0.06253,
+      "drift": false
+    },
+    "hour_of_day": {
+      "psi": 0.23113,
+      "drift": true
+    }
+  },
+  "drift_detected": true,
+  "dataset": "ml-latest-small",
+  "current_source": "events:data\\events"
+}

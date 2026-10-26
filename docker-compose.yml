@@ -1,0 +1,274 @@
+# Full local stack:  docker compose up -d --build
+#   kafka (KRaft) -> consumer -> Feast/Redis online store <- api <- MLflow registry
+#   trainer (one-shot) downloads MovieLens (default ml-1m), builds features, trains and
+#   registers a champion (pure ALS) and a challenger (hybrid).
+#   prometheus + pushgateway + grafana for monitoring.
+# Optional profiles:
+#   docker compose --profile jobs run --rm drift      # PSI drift report -> pushgateway
+#   docker compose --profile airflow up -d airflow    # Airflow standalone with the DAGs
+name: recsys
+
+x-recsys-env: &recsys-env
+  RECSYS_DATASET: ${RECSYS_DATASET:-ml-1m}
+  RECSYS_DATA_DIR: /app/data
+  RECSYS_ARTIFACTS_DIR: /app/artifacts
+  RECSYS_REPORTS_DIR: /app/reports
+  MLFLOW_TRACKING_URI: http://mlflow:5000
+  RECSYS_FEATURE_BACKEND: feast
+  RECSYS_FEAST_YAML: feature_store.redis.yaml
+  FEAST_REDIS_CONNECTION_STRING: redis:6379,db=1
+  RECSYS_CACHE_BACKEND: redis
+  RECSYS_REDIS_URL: redis://redis:6379/0
+  RECSYS_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  RECSYS_PUSHGATEWAY_URL: http://pushgateway:9091
+  RECSYS_LOG_FORMAT: json
+
+x-recsys-image: &recsys-image
+  image: recsys:local
+  build:
+    context: .
+    dockerfile: Dockerfile
+
+services:
+  # ------------------------------------------------------------------ streaming
+  kafka:
+    image: apache/kafka:4.3.1
+    hostname: kafka
+    environment:
+      CLUSTER_ID: 5L6g3nShT-eMCtK--X86sw
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093,EXTERNAL://:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+    ports:
+      - "29092:29092"
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server localhost:9092 > /dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 20s
+
+  kafka-init:
+    image: apache/kafka:4.3.1
+    depends_on:
+      kafka:
+        condition: service_healthy
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        set -e
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists \
+          --topic ratings.v1 --partitions 6 --replication-factor 1 --config retention.ms=604800000
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --create --if-not-exists \
+          --topic ratings.v1.dlq --partitions 1 --replication-factor 1
+        /opt/kafka/bin/kafka-topics.sh --bootstrap-server kafka:9092 --list
+    restart: "no"
+
+  # ------------------------------------------------------------------ storage
+  redis:
+    image: redis:7.4-alpine
+    # db0 = response cache (keys have TTLs), db1 = Feast online store (no TTL).
+    # volatile-lru only ever evicts keys with a TTL, so features are never evicted.
+    command: ["redis-server", "--maxmemory", "512mb", "--maxmemory-policy", "volatile-lru", "--save", "60", "1000"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v3.17.0
+    command:
+      - mlflow
+      - server
+      - --host=0.0.0.0
+      - --port=5000
+      - --backend-store-uri=sqlite:////mlflow/mlflow.db
+      - --artifacts-destination=/mlflow/artifacts
+      - --serve-artifacts
+      - --allowed-hosts=mlflow,mlflow:5000,localhost,localhost:5000,127.0.0.1:5000
+      - --workers=2
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow-data:/mlflow
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:5000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  # ------------------------------------------------------------------ batch: train + register
+  trainer:
+    <<: *recsys-image
+    environment: *recsys-env
+    command:
+      - bash
+      - -c
+      - |
+        set -e
+        recsys download
+        recsys prepare
+        recsys features
+        recsys feast-apply
+        recsys feast-materialize
+        # Registry lifecycle: the pure-ALS experiment (if any) is registered first and becomes
+        # champion; the default hybrid then becomes challenger only if it beats it.
+        exp=configs/experiments/$${RECSYS_DATASET}-pure-als.yaml
+        if [ -f "$$exp" ]; then recsys train --config "$$exp"; fi
+        recsys train
+    depends_on:
+      mlflow:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - app-data:/app/data
+      - app-artifacts:/app/artifacts
+    healthcheck:
+      disable: true
+    restart: "no"
+
+  # ------------------------------------------------------------------ online serving
+  api:
+    <<: *recsys-image
+    environment:
+      <<: *recsys-env
+      RECSYS_MODEL_SOURCE: mlflow
+      RECSYS_MODEL_REFRESH_SECONDS: "30"  # hot-swap on promote/rollback
+      RECSYS_CHALLENGER_TRAFFIC: "0.1"
+      RECSYS_SHADOW_TRAFFIC: "0.2"         # share of requests also scored by the shadow model
+      RECSYS_ORT_THREADS: "1"              # ONNX Runtime threads (the container has 1 CPU)
+    ports:
+      - "8000:8000"
+    depends_on:
+      trainer:
+        condition: service_completed_successfully
+      redis:
+        condition: service_healthy
+    volumes:
+      - app-data:/app/data:ro
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1g
+
+  consumer:
+    <<: *recsys-image
+    environment: *recsys-env
+    command: ["recsys", "consume"]
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      trainer:
+        condition: service_completed_successfully
+    volumes:
+      - app-data:/app/data
+    healthcheck:
+      disable: true
+    restart: unless-stopped
+
+  producer:
+    <<: *recsys-image
+    environment: *recsys-env
+    # replays the test window (events after the training cutoff) as live traffic
+    command: ["recsys", "produce", "--window", "test", "--rate", "${PRODUCER_RATE:-25}"]
+    depends_on:
+      kafka-init:
+        condition: service_completed_successfully
+      trainer:
+        condition: service_completed_successfully
+    volumes:
+      - app-data:/app/data:ro
+    healthcheck:
+      disable: true
+    restart: "no"
+
+  drift:
+    <<: *recsys-image
+    profiles: ["jobs"]
+    environment: *recsys-env
+    command: ["recsys", "drift", "--source", "events"]
+    volumes:
+      - app-data:/app/data
+    healthcheck:
+      disable: true
+    restart: "no"
+
+  # ------------------------------------------------------------------ monitoring
+  prometheus:
+    image: prom/prometheus:v3.13.4
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.retention.time=7d
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./deploy/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./deploy/prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+
+  pushgateway:
+    image: prom/pushgateway:v1.11.4
+    ports:
+      - "9091:9091"
+
+  grafana:
+    image: grafana/grafana:13.0.10
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./deploy/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./deploy/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - prometheus
+
+  # ------------------------------------------------------------------ orchestration (optional)
+  airflow:
+    profiles: ["airflow"]
+    image: recsys-airflow:local
+    build:
+      context: .
+      dockerfile: deploy/airflow/Dockerfile
+    command: ["airflow", "standalone"]
+    environment:
+      <<: *recsys-env
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      RECSYS_PYTHON: /opt/recsys-venv/bin/python
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./dags:/opt/airflow/dags:ro
+      - app-data:/app/data
+    depends_on:
+      mlflow:
+        condition: service_healthy
+
+volumes:
+  kafka-data:
+  redis-data:
+  mlflow-data:
+  app-data:
+  app-artifacts:

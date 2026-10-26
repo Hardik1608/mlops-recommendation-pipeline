@@ -1,0 +1,24 @@
+# Runtime dependencies (API, stream processor, training jobs).
+# Bounds were chosen from the versions verified in this repo (see README "Status").
+numpy>=1.26,<3
+scipy>=1.11,<2
+pandas>=2.2,<3            # feast 0.66 requires pandas<3
+pyarrow>=16,<26
+pydantic>=2.7,<3
+pydantic-settings>=2.3,<3
+PyYAML>=6.0,<7
+
+# Serving
+fastapi>=0.115,<1
+uvicorn[standard]>=0.30,<1
+prometheus-client>=0.20,<1
+threadpoolctl>=3.1,<4      # pin BLAS threads in the API process
+onnxruntime>=1.18,<2       # SASRec inference (trained with torch, served from ONNX)
+redis>=5.0,<8
+httpx>=0.27,<1
+
+# Platform
+mlflow>=3.1,<4
+feast[redis]>=0.60,<0.70
+psycopg[binary]>=3.2,<4    # Feast SQL registry on Postgres (Kubernetes)
+confluent-kafka>=2.5,<3

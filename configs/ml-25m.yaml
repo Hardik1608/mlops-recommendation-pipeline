@@ -1,0 +1,55 @@
+# Training configuration for MovieLens 25M (162,541 users, 59,047 movies, 25.0M ratings).
+# Every hyper-parameter below was selected on the VALIDATION window by the staged plans in
+# configs/tuning/ (ml-25m-als.yaml, ml-25m-sasrec.yaml); the grids and scores are in
+# reports/tuning/ml-25m/ (file names = stages). The test window is only used by
+# `recsys train` / `recsys benchmark`.
+# ALS stages 1-4 ran on the numpy backend; training here uses the torch backend (GPU, float32),
+# which gives the same metrics to 4 decimals (tests/unit/test_models.py).
+dataset: ml-25m
+split:
+  val_fraction: 0.1
+  test_fraction: 0.1
+evaluation:
+  k: 10
+  relevance_threshold: 4.0
+  context_events: 5
+model:                         # served model: implicit ALS + trending-popularity prior
+  type: implicit_als
+  factors: 128                 # 3_implicit_als_factors.json (64 -> 128 helped at this scale)
+  regularization: 100.0        # 2_implicit_als_alpha_reg_weighting.json
+  alpha: 1.0                   # 2_
+  weighting: rating            # 2_ (binary on ml-1m)
+  iterations: 15
+  popularity_half_life_days: 90  # cold-start fallback = tuned baseline (1_)
+  blend_half_life_days: 14     # 4_implicit_als_popularity_blend.json
+  blend_weight: 5.0            # 4_
+  backend: torch
+  device: auto
+baseline:
+  type: popularity
+  popularity_half_life_days: 90  # 1_popularity_half_life.json (no decay was best on ml-1m)
+explicit:                      # rating-prediction model, reported for RMSE
+  type: explicit_als
+  factors: 64
+  regularization: 0.05         # 5_explicit_als_reg.json (0.05 / 0.1 / 0.2)
+  iterations: 15
+  backend: torch
+  device: auto
+sequential:                    # SASRec, trained on GPU, served via ONNX Runtime
+  type: sasrec
+  factors: 64                  # 7_sasrec_hidden.json (128 was worse)
+  max_len: 200                 # carried over from ml-1m (8_)
+  num_blocks: 2                # ml-1m 7_
+  num_heads: 1
+  dropout: 0.2                 # ml-1m 7_
+  learning_rate: 0.001
+  batch_size: 64
+  loss: sampled_ce             # 6_sasrec_loss.json: same NDCG as full softmax, 5x faster
+  num_negatives: 1024
+  epochs: 14                   # best validation epoch of the selected trial (early stopping)
+  eval_every: 2
+  patience: 3
+  popularity_half_life_days: 90  # same cold-start fallback as every other model
+gate:
+  metric: ndcg_at_10
+  min_relative_improvement: 0.0

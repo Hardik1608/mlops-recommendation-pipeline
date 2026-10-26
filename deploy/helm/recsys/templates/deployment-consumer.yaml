@@ -1,0 +1,57 @@
+{{- if .Values.consumer.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "recsys.fullname" . }}-consumer
+  labels:
+    {{- include "recsys.labels" . | nindent 4 }}
+    app.kubernetes.io/component: consumer
+spec:
+  replicas: {{ .Values.consumer.replicaCount }}
+  revisionHistoryLimit: 5
+  selector:
+    matchLabels:
+      {{- include "recsys.selectorLabels" (dict "root" . "component" "consumer") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "recsys.selectorLabels" (dict "root" . "component" "consumer") | nindent 8 }}
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      # SIGTERM -> the consumer flushes the offline sink and commits offsets before exiting.
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: consumer
+          image: {{ include "recsys.image" . }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command: ["recsys", "consume"]
+          envFrom:
+            {{- include "recsys.envFrom" . | nindent 12 }}
+          env:
+            - name: RECSYS_DATA_DIR
+              value: /data
+            - name: HOME
+              value: /tmp
+          resources:
+            {{- toYaml .Values.consumer.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        # Offline event sink. In production point it at object storage (s3://...) instead.
+        - name: data
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+{{- end }}

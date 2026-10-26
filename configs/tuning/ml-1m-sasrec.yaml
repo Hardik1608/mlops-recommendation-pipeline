@@ -1,0 +1,15 @@
+# Staged search for SASRec on ml-1m: train -> validation window, warm users (cold users get
+# the same popularity fallback from every model). Continues the ALS stages 1_ to 6_ in
+# reports/tuning/ml-1m/. Base values: the `sequential` block of configs/ml-1m.yaml.
+# Every trial early-stops on validation NDCG@10 (checked every 5 epochs, patience 5).
+#   recsys tune-plan --plan configs/tuning/ml-1m-sasrec.yaml --mlflow
+dataset: ml-1m
+stages:
+  - name: 7_sasrec_hidden_dropout_blocks
+    model: sasrec
+    metric: warm_ndcg_at_10
+    grid: {factors: [64, 128], dropout: [0.2, 0.5], num_blocks: [1, 2]}
+  - name: 8_sasrec_max_len_lr
+    model: sasrec
+    metric: warm_ndcg_at_10
+    grid: {max_len: [50, 100, 200], learning_rate: [0.001, 0.0005]}

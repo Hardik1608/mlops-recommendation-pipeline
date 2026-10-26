@@ -1,0 +1,31 @@
+# Experiment: the served ml-1m model without the trending-popularity prior (blend_weight 0).
+# The Compose trainer registers this first (it becomes champion), then the default
+# configs/ml-1m.yaml hybrid, which the gate makes challenger if it scores higher.
+dataset: ml-1m
+split:
+  val_fraction: 0.1
+  test_fraction: 0.1
+evaluation:
+  k: 10
+  relevance_threshold: 4.0     # a test rating >= 4 counts as relevant
+  context_events: 5            # streaming-value experiment
+model:                         # served model: implicit ALS + trending-popularity prior
+  type: implicit_als
+  factors: 64                  # 3_implicit_als_factors_reg.json (128 was not better)
+  regularization: 100.0        # 2_ + 3_ (0.1 .. 1000 searched)
+  alpha: 1.0                   # 2_implicit_als_alpha_reg_weighting.json
+  weighting: binary            # 2_
+  iterations: 15
+  popularity_half_life_days: null # cold-start fallback = tuned baseline (1_)
+  blend_weight: 0.0            # pure ALS: no trending-popularity prior
+baseline:
+  type: popularity
+  popularity_half_life_days: null  # 1_popularity_half_life.json (no decay was best)
+explicit:                      # rating-prediction model, reported for RMSE
+  type: explicit_als
+  factors: 64                  # 5_explicit_als_factors_reg.json
+  regularization: 0.1          # 5_ + 6_explicit_als_reg.json
+  iterations: 15
+gate:
+  metric: ndcg_at_10           # challenger must strictly beat the champion on test
+  min_relative_improvement: 0.0

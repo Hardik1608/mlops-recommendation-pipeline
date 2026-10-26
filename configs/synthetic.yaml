@@ -1,0 +1,26 @@
+# Synthetic dataset used by the test-suite and CI (no downloads, trains in seconds).
+dataset: synthetic
+split:
+  val_fraction: 0.1
+  test_fraction: 0.15
+evaluation:
+  k: 10
+  relevance_threshold: 4.0
+  context_events: 3
+model:
+  type: implicit_als
+  factors: 16
+  regularization: 1.0
+  alpha: 5.0
+  weighting: rating
+  iterations: 8
+baseline:
+  type: popularity
+explicit:
+  type: explicit_als
+  factors: 8
+  regularization: 0.1
+  iterations: 8
+gate:
+  metric: ndcg_at_10
+  min_relative_improvement: 0.0
